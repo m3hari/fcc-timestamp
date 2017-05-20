@@ -85,4 +85,4 @@ function startHook() {
 }
 
 const server = http.createServer(requestHandler);
-server.listen(PORT, startHook);
+server.listen(process.env.PORT || PORT, startHook);
