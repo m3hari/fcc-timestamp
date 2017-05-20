@@ -4,7 +4,7 @@
  */
 
 const http = require('http');
-const url = require('url');
+const URL = require('url');
 
 const PORT = 3030;
 const DEBUG = true;
@@ -17,15 +17,16 @@ const INVALID_DATE_ERROR = 'Invalid Date';
  * 
  */
 function isValidDate(dateTime) {
-    if (!dateTime) {
-        return false;
+    let isNum = !isNaN(parseInt(dateTime));
+    if (isNum) {
+        let time = parseInt(dateTime);
+        return new Date(time) == INVALID_DATE_ERROR ? false : true;
     }
-    if (typeof dateTime === 'number') {
-        return new Date(dateTime) == INVALID_DATE_ERROR ? false : true;
-
-    }
-    if (typeof dateTime === 'string') {
+    if (!isNum && typeof dateTime === 'string') {
         let dt = dateTime.replace(SPACE_CHAR_REGX, ' ');
+        if (dt.trim() === '') {
+            return true;
+        }
         return new Date(dt) == INVALID_DATE_ERROR ? false : true;
     }
     return false;
@@ -39,9 +40,17 @@ function isValidDate(dateTime) {
 function timeStampService(query) {
     if (isValidDate(query)) {
         const dateTime = (typeof query === 'string') ? query.replace(SPACE_CHAR_REGX, ' ') : query;
-        const date = new Date(dateTime);
+        let date = new Date(dateTime);
+        if (query.trim() === '') {
+            date = new Date();
+        }
+        let isNum = !isNaN(parseInt(dateTime));
+        if (isNum) {
+            date = new Date(parseInt(dateTime));
+        }
         return `{"unix":${ date.getTime() },"natural":"${date.toDateString()}"}`;
     }
+
     return `{"error":"Invalid Date" }`;
 }
 
@@ -51,27 +60,24 @@ function timeStampService(query) {
  * @param {Response} response 
  */
 function requestHandler(request, response) {
-    if (DEBUG) {
-        console.info('Received http request.');
-    }
-
-    if (request.url === 'favicon.ico') {
+    const parsedUrl = URL.parse(request.url, true);
+    const path = parsedUrl.path;
+    const query = path.substring(1, path.length); //remove the trailing slash from the path
+    if (query === 'favicon.ico') {
         response.writeHead(200, {
             'Content-Type': 'image/x-icon'
         });
         return response.end();
     }
 
-    const parsedUrl = url.parse(request.url, true);
-    const path = parsedUrl.path;
-    const query = path.substring(1, path.length); //remove the trailing slash from the path
     const result = timeStampService(query);
-
     response.writeHead(200, {
         'Content-Type': 'text/json'
     });
     response.write(result);
     return response.end();
+
+
 
 }
 
