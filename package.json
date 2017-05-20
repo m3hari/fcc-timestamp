@@ -4,7 +4,7 @@
   "description": "Free Code Camp Project (FCC)",
   "main": "fcc-timestamp.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node fcc-timestamp.js",
     "test": "node_module/mocha/bin/mocha 'test/*/*.js'"
   },
   "author": "m3hari <Mehari Geta>",
