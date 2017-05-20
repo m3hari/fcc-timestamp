@@ -1,11 +1,12 @@
 {
   "name": "fcc-timestamp",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Free Code Camp Project (FCC)",
+  "main": "fcc-timestamp.js",
   "scripts": {
-    "test": ""
+    "start": "node index.js",
+    "test": "node_module/mocha/bin/mocha 'test/*/*.js'"
   },
-  "author": "",
+  "author": "m3hari <Mehari Geta>",
   "license": "ISC"
 }
